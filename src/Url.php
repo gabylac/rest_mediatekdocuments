@@ -128,7 +128,7 @@ class Url {
         }
         if(!empty($_POST)){
             $data = array_merge($data, $_POST);
-        }
+        }        
         $input = file_get_contents('php://input');
         parse_str($input, $postData);
         $data = array_merge($data, $postData);    

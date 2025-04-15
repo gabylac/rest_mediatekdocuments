@@ -111,5 +111,4 @@ class Connexion {
             throw $e;
         }
     }
-    
 }
