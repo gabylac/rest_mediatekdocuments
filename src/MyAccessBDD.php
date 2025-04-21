@@ -44,6 +44,12 @@ class MyAccessBDD extends AccessBDD {
                 return $this->selectAllCommandes();
             case "commandedocument":
                 return $this->selectCommandesDocument($champs);
+            case "abonnement":
+                if(empty($champs)){
+                    return $this->selectAbonnementFinProche();
+                }else{
+                    return $this->selectAbonnementRevue($champs);
+                }                
             case "genre" :
             case "public" :
             case "rayon" :
@@ -70,6 +76,8 @@ class MyAccessBDD extends AccessBDD {
         switch($table){
             case "commandedocument":
                 return $this->insertCommandeDocument($champs);
+            case "abonnement":
+                return $this->insertAbonnementRevue($champs);
             case "" :
                 // return $this->uneFonction(parametres);
             default:                    
@@ -382,10 +390,63 @@ class MyAccessBDD extends AccessBDD {
             'idSuivi' => $champs['IdSuivi']
         ];
         // construction de la requête
-        $requete = "update commandedocument ";
-        
+        $requete = "update commandedocument ";        
         $requete .= "set idSuivi = :idSuivi ";        
         $requete .= " where id=:id;";		
         return $this->conn->updateBDD($requete, $champsNecessaires);
+    }
+    
+    /**
+     * récupère tous les abonnements d'une revue
+     * @param array|null $champs
+     * @return array|null
+     */
+    private function selectAbonnementRevue(?array $champs) : ?array {
+        if(empty($champs)){
+            return null;
+        }
+        if(!array_key_exists('idRevue', $champs)){
+            return null;
+        }
+        $champNecessaire['idRevue'] = $champs['idRevue'];
+        $requete = "Select a.id, a.dateFinAbonnement, a.idRevue, c.dateCommande, c.montant";
+        $requete .= " from abonnement a join commande c on a.id=c.id";
+        $requete .= " join revue r on a.idRevue=r.id";
+        $requete .= " where a.idRevue= :idRevue";
+        $requete .= " order by c.dateCommande DESC";
+        return $this->conn->queryBDD($requete, $champNecessaire);
+    }
+    
+    /**
+     * demande d'ajout d'un abonnement à une revue
+     * @param array|null $champs
+     * @return int|null nombre de tuples insérés en base de données
+     */
+    private function insertAbonnementRevue(?array $champs) : ?int {
+        if(empty($champs)){
+            return null;
+        }       
+        $champsNecessaires = [
+            'id' => $champs['Id'],
+            'dateCommande' => $champs['DateCommande'],
+            'montant' => $champs['Montant'],
+            'dateFinAbonnement' => $champs['DateFinAbonnement'],
+            'idRevue' => $champs['IdRevue']
+        ];
+        $requete = "CALL insertAbonnementRevue(:id, :dateCommande, :montant, :dateFinAbonnement, :idRevue)";
+        return $this->conn->updateBDD($requete, $champsNecessaires);
+    }
+    
+    /**
+     * récupère tous les abonnements avec le titre de la revue associée
+     * @return array|null
+     */
+    private function selectAbonnementFinProche() : ?array{
+        $requete = "select a.dateFinAbonnement, a.idRevue, d.titre ";
+        $requete .= "from abonnement a join revue r on a.idRevue = r.id ";
+        $requete .= "join document d on r.id = d.id ";
+        $requete .= "order by a.dateFinAbonnement ASC";
+        return $this->conn->queryBDD($requete);
+        
     }
 }
