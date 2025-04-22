@@ -42,6 +42,12 @@ class MyAccessBDD extends AccessBDD {
                 return $this->selectExemplairesRevue($champs);                        
             case "commande":
                 return $this->selectAllCommandes();
+            case "users":
+                if(empty($champs)){
+                    return $this->selectAllUsers();                
+                }else{
+                    return $this->selectUserAuthentifie($champs);
+                }     
             case "commandedocument":
                 return $this->selectCommandesDocument($champs);
             case "abonnement":
@@ -447,6 +453,30 @@ class MyAccessBDD extends AccessBDD {
         $requete .= "join document d on r.id = d.id ";
         $requete .= "order by a.dateFinAbonnement ASC";
         return $this->conn->queryBDD($requete);
+        
+    }
+    
+    /**
+     * récupère tous les users
+     * @return array|null
+     */
+    private function selectAllUsers() : ?array{
+        $requete = "Select u.id, u.login, u.pwd, u.idService, s.libelle from users u ";
+        $requete .="join service s on u.idService = s.id";
+        return $this->conn->queryBDD($requete);
+    }
+    
+    private function selectUserAuthentifie($champs) : ?array{
+        if(empty($champs)){
+            return null;
+        }        
+        $champsNecessaires = [
+            'login' => $champs['login'],
+            'pwd' => $champs['pwd']
+        ];
+        $requete = "Select u.id, u.login, u.pwd, u.idService from users u ";        
+        $requete .= "where u.login =:login and u.pwd =SHA2(:pwd, 256)";        
+        return $this->conn->queryBDD($requete, $champsNecessaires);
         
     }
 }
