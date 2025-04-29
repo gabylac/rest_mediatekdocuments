@@ -354,28 +354,8 @@ class MyAccessBDD extends AccessBDD {
         $req = "CALL insertCommande(:id, :dateCommande, :montant, :nbExemplaire, :idLivreDvd, :idSuivi)";
               
         return $this->conn->updateBDD($req, $champsNecessaire);        
-    }
-    
-    /**
-     * demande la suppression d'une commande d'un document
-     * @param array $champs
-     * @return int|null le nombre de tuples supprimés ou null si erreur
-     */
-    private function deleteOneCommande(array $champs): ?int
-    {
-        if(empty($champs)){
-            return null;
-        }
-        if(!array_key_exists('id', $champs)){
-            return null;
-        }
-        $champNecessaire['id'] = $champs['id'];
-        // construction de la requête
-        $requete = "delete from commande where ";
-        $requete .= "id = :id;";
-        return $this->conn->queryBDD($requete, $champNecessaire);
-    }
-    
+    }    
+        
     /**
      * modification du statut d'une commande d'un document
      * @param string $id
@@ -393,7 +373,7 @@ class MyAccessBDD extends AccessBDD {
         
         $champsNecessaires = [
             'id' => $id,
-            'idSuivi' => $champs['IdSuivi']
+            'idSuivi' => $champs['idSuivi']
         ];
         // construction de la requête
         $requete = "update commandedocument ";        
