@@ -373,7 +373,7 @@ class MyAccessBDD extends AccessBDD {
         
         $champsNecessaires = [
             'id' => $id,
-            'idSuivi' => $champs['idSuivi']
+            'idSuivi' => $champs['IdSuivi']
         ];
         // construction de la requête
         $requete = "update commandedocument ";        
@@ -446,6 +446,11 @@ class MyAccessBDD extends AccessBDD {
         return $this->conn->queryBDD($requete);
     }
     
+    /**
+     * récupère les users concernés par les paramètres
+     * @param type $champs
+     * @return array|null
+     */
     private function selectUserAuthentifie($champs) : ?array{
         if(empty($champs)){
             return null;

@@ -91,30 +91,32 @@ class Url {
      * si besoin d'un autre type d'authentification
      * @return bool
      */
-    public function authentification(): bool{
+    /*public function authentification(): bool{
         $authentification = htmlspecialchars($_ENV['AUTHENTIFICATION'] ?? '');
         switch ($authentification){
             case '' : return true ;
             case 'basic' : return self::basicAuthentification() ;
             default : return true;
         }
-    }
+    }*/
 
     /**
      * compare le user/pwd reçu en 'basic auth' 
      * avec le user/pwd dans les variables d'environnement
      * @return bool true si authentification réussie
      */
-    private function basicAuthentification() : bool{
+    /*private function basicAuthentification() : bool{
+        
         // récupère les variables d'environnement de l'authentification
         $expectedUser = htmlspecialchars($_ENV['AUTH_USER'] ?? '');
         $expectedPw = htmlspecialchars($_ENV['AUTH_PW'] ?? '');  
         // récupère les variables envoyées en 'basic auth'
         $authUser = htmlspecialchars($_SERVER['PHP_AUTH_USER'] ?? '');
-        $authPw = htmlspecialchars($_SERVER['PHP_AUTH_PW'] ?? '');    
+        $authPw = htmlspecialchars($_SERVER['PHP_AUTH_PW'] ?? '');       
+            
         // Contrôle si les valeurs d'authentification sont identiques
         return ($authUser === $expectedUser && $authPw === $expectedPw) ;
-    }    
+    }*/    
  
     /**
      * récupération de toutes les variables envoyées par l'URL
